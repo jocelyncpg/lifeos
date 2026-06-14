@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
 
 type Transaccion = {
   id: string
@@ -96,6 +97,38 @@ export default function FinanzasPage() {
   const formatMonto = (n: number) =>
     n.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })
 
+  const coloresCategorias = ['#3b82f6', '#ef4444', '#f59e0b', '#10b981', '#8b5cf6', '#ec4899', '#6366f1', '#14b8a6']
+
+  const gastosPorCategoria = Object.entries(
+    transacciones
+      .filter(t => t.tipo === 'gasto')
+      .reduce((acc: Record<string, number>, t) => {
+        acc[t.categoria] = (acc[t.categoria] || 0) + t.monto
+        return acc
+      }, {})
+  ).map(([categoria, monto], i) => ({
+    categoria,
+    monto,
+    color: coloresCategorias[i % coloresCategorias.length],
+  }))
+
+  // Últimos 6 meses para gráfico de barras
+  const ultimosMeses = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date()
+    d.setMonth(d.getMonth() - (5 - i))
+    return { mes: d.toLocaleDateString('es-CL', { month: 'short' }), key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` }
+  })
+
+  const dataMensual = ultimosMeses.map(({ mes, key }) => {
+    const ingresos = transacciones
+      .filter(t => t.tipo === 'ingreso' && t.fecha.startsWith(key))
+      .reduce((s, t) => s + t.monto, 0)
+    const gastos = transacciones
+      .filter(t => t.tipo === 'gasto' && t.fecha.startsWith(key))
+      .reduce((s, t) => s + t.monto, 0)
+    return { mes, ingresos, gastos }
+  })
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -124,6 +157,50 @@ export default function FinanzasPage() {
         <div className={`rounded-xl p-4 border ${balance >= 0 ? 'bg-blue-50 border-blue-100' : 'bg-orange-50 border-orange-100'}`}>
           <p className={`text-sm font-medium ${balance >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>Balance</p>
           <p className={`text-2xl font-bold mt-1 ${balance >= 0 ? 'text-blue-700' : 'text-orange-700'}`}>{formatMonto(balance)}</p>
+        </div>
+      </div>
+
+      {/* Gráficos */}
+      <div className="grid grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl border border-gray-100 p-6">
+          <h3 className="font-semibold text-gray-800 mb-4">Gastos por categoría</h3>
+          {gastosPorCategoria.length === 0 ? (
+            <p className="text-gray-400 text-sm">No hay gastos registrados aún.</p>
+          ) : (
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                <Pie
+                  data={gastosPorCategoria}
+                  dataKey="monto"
+                  nameKey="categoria"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  label={(props: any) => `${props.categoria} ${((props.percent ?? 0) * 100).toFixed(0)}%`}
+                >
+                  {gastosPorCategoria.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value: any) => formatMonto(Number(value))} />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+
+        <div className="bg-white rounded-xl border border-gray-100 p-6">
+          <h3 className="font-semibold text-gray-800 mb-4">Últimos 6 meses</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={dataMensual}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="mes" fontSize={12} />
+              <YAxis fontSize={12} tickFormatter={(v) => `${v / 1000}k`} />
+              <Tooltip formatter={(value: any) => formatMonto(Number(value))} />
+              <Legend />
+              <Bar dataKey="ingresos" fill="#10b981" name="Ingresos" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="gastos" fill="#ef4444" name="Gastos" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
