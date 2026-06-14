@@ -9,6 +9,8 @@ const menuItems = [
   { href: '/dashboard/finanzas', label: 'Finanzas', icon: '💸' },
   { href: '/dashboard/academico', label: 'Académico', icon: '🎓' },
   { href: '/dashboard/deporte', label: 'Deporte', icon: '💪' },
+  { href: '/dashboard/calendario', label: 'Calendario', icon: '🗓️' },
+  { href: '/dashboard/salud', label: 'Salud', icon: '💊' },
 ]
 
 export default function DashboardLayout({
@@ -32,7 +34,7 @@ export default function DashboardLayout({
       <aside className="w-64 bg-[#131B2E] flex flex-col border-r border-[#1E293B]">
         <div className="p-6 border-b border-[#1E293B]">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-md bg-[#00E5C7] flex items-center justify-center text-[#04342C] font-semibold text-sm">L</div>
+          <img src="/logo.svg" alt="LifeOS" className="w-12 h-12 rounded-md" />
             <h1 className="text-xl font-semibold text-[#F4F6FB]">LifeOS</h1>
           </div>
           <p className="text-xs text-[#8C97B5] mt-1">Tu copiloto de vida</p>

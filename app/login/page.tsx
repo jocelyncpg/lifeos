@@ -35,7 +35,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-[#0B0F1A]">
       <div className="w-full max-w-md space-y-8 p-8 bg-[#131B2E] border border-[#1E293B] rounded-xl">
         <div className="flex flex-col items-center">
-          <div className="w-10 h-10 rounded-md bg-[#00E5C7] flex items-center justify-center text-[#04342C] font-semibold text-lg mb-3">L</div>
+        <img src="/logo.svg" alt="LifeOS" className="w-16 h-16 rounded-md mb-3" />
           <h2 className="text-2xl font-bold text-center text-[#F4F6FB]">Iniciar sesión</h2>
           <p className="text-sm text-[#8C97B5] mt-1">LifeOS — tu copiloto de vida</p>
         </div>

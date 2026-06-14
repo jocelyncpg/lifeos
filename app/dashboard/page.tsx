@@ -12,6 +12,8 @@ export default function DashboardPage() {
   const [promedioGeneral, setPromedioGeneral] = useState<number | null>(null)
   const [ultimoEntrenamiento, setUltimoEntrenamiento] = useState<any>(null)
   const [totalEntrenamientos, setTotalEntrenamientos] = useState(0)
+  const [medicamentosActivos, setMedicamentosActivos] = useState(0)
+  const [proximaCita, setProximaCita] = useState<any>(null)
   const [insights, setInsights] = useState<Insight[]>([])
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
@@ -62,11 +64,34 @@ export default function DashboardPage() {
       setTotalEntrenamientos(entrenos.length)
     }
 
+    // Calendario
+    const { data: eventosData } = await supabase
+      .from('eventos')
+      .select('titulo, fecha, hora, tipo, completado')
+
+    // Salud
+    const { data: medsData } = await supabase
+      .from('medicamentos')
+      .select('nombre, horarios, activo')
+
+    const { data: citasData } = await supabase
+      .from('citas_medicas')
+      .select('especialidad, fecha, hora, completada')
+
+    setMedicamentosActivos((medsData || []).filter(m => m.activo).length)
+    const proxima = (citasData || [])
+      .filter(c => !c.completada && c.fecha >= new Date().toISOString().split('T')[0])
+      .sort((a, b) => a.fecha.localeCompare(b.fecha))[0]
+    setProximaCita(proxima || null)
+
     // Insights con IA basada en reglas
     const insightsGenerados = generarInsights(
       transacciones || [],
       notas || [],
-      entrenos || []
+      entrenos || [],
+      eventosData || [],
+      medsData || [],
+      citasData || []
     )
     setInsights(insightsGenerados)
 
@@ -120,7 +145,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Tarjetas resumen */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-4 gap-4">
 
         {/* Finanzas */}
         <Link href="/dashboard/finanzas" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6 hover:border-[#00E5C7]/40 transition-colors space-y-4">
@@ -184,6 +209,26 @@ export default function DashboardPage() {
               <p className="text-xs text-[#8C97B5]">Último entrenamiento</p>
               <p className="text-sm text-[#F4F6FB] mt-0.5">
                 {deporteEmoji[ultimoEntrenamiento.deporte] || '💪'} {ultimoEntrenamiento.deporte} — {ultimoEntrenamiento.duracion} min
+              </p>
+            </div>
+          )}
+        </Link>
+
+        {/* Salud */}
+        <Link href="/dashboard/salud" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6 hover:border-[#00E5C7]/40 transition-colors space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-2xl">💊</span>
+            <span className="text-xs text-[#8C97B5] uppercase tracking-wide">Salud</span>
+          </div>
+          <div>
+            <p className="text-sm text-[#8C97B5]">Medicamentos activos</p>
+            <p className="text-2xl font-bold mt-1 text-[#7C5CFC]">{medicamentosActivos}</p>
+          </div>
+          {proximaCita && (
+            <div className="pt-3 border-t border-[#1E293B]">
+              <p className="text-xs text-[#8C97B5]">Próxima cita</p>
+              <p className="text-sm text-[#F4F6FB] mt-0.5">
+                {proximaCita.especialidad} — {proximaCita.fecha}
               </p>
             </div>
           )}
