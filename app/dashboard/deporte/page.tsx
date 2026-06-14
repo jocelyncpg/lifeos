@@ -15,9 +15,9 @@ type Entrenamiento = {
 const deportes = ['Boxeo', 'Escalada', 'Natación', 'Trekking', 'Ciclismo', 'Fútbol', 'Tenis', 'Yoga', 'Gym', 'Otro']
 
 const intensidadColor = {
-  baja: 'bg-green-100 text-green-700',
-  media: 'bg-yellow-100 text-yellow-700',
-  alta: 'bg-red-100 text-red-700',
+  baja: 'bg-green-500/10 text-green-400',
+  media: 'bg-yellow-500/10 text-yellow-400',
+  alta: 'bg-red-500/10 text-red-400',
 }
 
 const deporteEmoji: Record<string, string> = {
@@ -103,12 +103,12 @@ export default function DeportePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">💪 Deporte</h2>
-          <p className="text-gray-500 text-sm mt-1">Registra tus entrenamientos</p>
+          <h2 className="text-2xl font-bold text-[#F4F6FB]">💪 Deporte</h2>
+          <p className="text-[#8C97B5] text-sm mt-1">Registra tus entrenamientos</p>
         </div>
         <button
           onClick={() => setMostrarForm(!mostrarForm)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
+          className="bg-[#00E5C7] text-[#04342C] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#00E5C7]/80"
         >
           + Nuevo entrenamiento
         </button>
@@ -116,32 +116,32 @@ export default function DeportePage() {
 
       {/* Resumen */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
-          <p className="text-sm text-blue-600 font-medium">Total entrenamientos</p>
-          <p className="text-2xl font-bold text-blue-700 mt-1">{entrenamientos.length}</p>
+        <div className="bg-[#00E5C7]/10 border border-[#00E5C7]/20 rounded-xl p-4">
+          <p className="text-sm text-[#00E5C7] font-medium">Total entrenamientos</p>
+          <p className="text-2xl font-bold text-[#00E5C7] mt-1">{entrenamientos.length}</p>
         </div>
-        <div className="bg-purple-50 border border-purple-100 rounded-xl p-4">
-          <p className="text-sm text-purple-600 font-medium">Tiempo total</p>
-          <p className="text-2xl font-bold text-purple-700 mt-1">{totalHoras}h {minutosRestantes}m</p>
+        <div className="bg-[#7C5CFC]/10 border border-[#7C5CFC]/20 rounded-xl p-4">
+          <p className="text-sm text-[#7C5CFC] font-medium">Tiempo total</p>
+          <p className="text-2xl font-bold text-[#7C5CFC] mt-1">{totalHoras}h {minutosRestantes}m</p>
         </div>
-        <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
-          <p className="text-sm text-orange-600 font-medium">Deportes distintos</p>
-          <p className="text-2xl font-bold text-orange-700 mt-1">{porDeporte.length}</p>
+        <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4">
+          <p className="text-sm text-orange-400 font-medium">Deportes distintos</p>
+          <p className="text-2xl font-bold text-orange-400 mt-1">{porDeporte.length}</p>
         </div>
       </div>
 
       {/* Formulario */}
       {mostrarForm && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
-          <h3 className="font-semibold text-gray-800">Nuevo entrenamiento</h3>
+        <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6 space-y-4">
+          <h3 className="font-semibold text-[#F4F6FB]">Nuevo entrenamiento</h3>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium text-gray-700">Deporte</label>
+              <label className="text-sm font-medium text-[#8C97B5]">Deporte</label>
               <select
                 value={deporte}
                 onChange={e => setDeporte(e.target.value)}
-                className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]"
               >
                 {deportes.map(d => (
                   <option key={d} value={d}>{deporteEmoji[d]} {d}</option>
@@ -149,23 +149,23 @@ export default function DeportePage() {
               </select>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700">Duración (minutos)</label>
+              <label className="text-sm font-medium text-[#8C97B5]">Duración (minutos)</label>
               <input
                 type="number"
                 value={duracion}
                 onChange={e => setDuracion(e.target.value)}
                 placeholder="Ej: 60"
-                className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700">Intensidad</label>
+              <label className="text-sm font-medium text-[#8C97B5]">Intensidad</label>
               <div className="flex gap-2 mt-1">
                 {(['baja', 'media', 'alta'] as const).map(i => (
                   <button
                     key={i}
                     onClick={() => setIntensidad(i)}
-                    className={`flex-1 py-2 rounded-lg text-sm font-medium capitalize ${intensidad === i ? intensidadColor[i] : 'bg-gray-100 text-gray-500'}`}
+                    className={`flex-1 py-2 rounded-lg text-sm font-medium capitalize ${intensidad === i ? intensidadColor[i] : 'bg-[#1E293B] text-[#8C97B5]'}`}
                   >
                     {i}
                   </button>
@@ -173,64 +173,64 @@ export default function DeportePage() {
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700">Fecha</label>
+              <label className="text-sm font-medium text-[#8C97B5]">Fecha</label>
               <input
                 type="date"
                 value={fecha}
                 onChange={e => setFecha(e.target.value)}
-                className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]"
               />
             </div>
             <div className="col-span-2">
-              <label className="text-sm font-medium text-gray-700">Descripción</label>
+              <label className="text-sm font-medium text-[#8C97B5]">Descripción</label>
               <input
                 type="text"
                 value={descripcion}
                 onChange={e => setDescripcion(e.target.value)}
                 placeholder="Ej: 10 rounds de sparring"
-                className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
               />
             </div>
           </div>
 
-          {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
+          {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}
 
           <div className="flex gap-2 justify-end">
-            <button onClick={() => setMostrarForm(false)} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-            <button onClick={agregarEntrenamiento} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar</button>
+            <button onClick={() => setMostrarForm(false)} className="px-4 py-2 text-sm text-[#8C97B5] hover:bg-white/5 rounded-lg">Cancelar</button>
+            <button onClick={agregarEntrenamiento} className="px-4 py-2 text-sm bg-[#00E5C7] text-[#04342C] font-medium rounded-lg hover:bg-[#00E5C7]/80">Guardar</button>
           </div>
         </div>
       )}
 
       <div className="grid grid-cols-3 gap-6">
         {/* Lista entrenamientos */}
-        <div className="col-span-2 bg-white rounded-xl border border-gray-100">
-          <div className="p-4 border-b">
-            <h3 className="font-semibold text-gray-800">Historial</h3>
+        <div className="col-span-2 bg-[#131B2E] rounded-xl border border-[#1E293B]">
+          <div className="p-4 border-b border-[#1E293B]">
+            <h3 className="font-semibold text-[#F4F6FB]">Historial</h3>
           </div>
           {loading ? (
-            <p className="p-4 text-gray-400 text-sm">Cargando...</p>
+            <p className="p-4 text-[#8C97B5] text-sm">Cargando...</p>
           ) : entrenamientos.length === 0 ? (
-            <p className="p-4 text-gray-400 text-sm">No hay entrenamientos aún.</p>
+            <p className="p-4 text-[#8C97B5] text-sm">No hay entrenamientos aún.</p>
           ) : (
-            <ul className="divide-y">
+            <ul className="divide-y divide-[#1E293B]">
               {entrenamientos.map(e => (
                 <li key={e.id} className="flex items-center justify-between px-4 py-3">
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{deporteEmoji[e.deporte] || '💪'}</span>
                     <div>
-                      <p className="text-sm font-medium text-gray-800">{e.deporte}</p>
-                      <p className="text-xs text-gray-400">{e.descripcion || '—'} · {e.fecha}</p>
+                      <p className="text-sm font-medium text-[#F4F6FB]">{e.deporte}</p>
+                      <p className="text-xs text-[#8C97B5]">{e.descripcion || '—'} · {e.fecha}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${intensidadColor[e.intensidad]}`}>
                       {e.intensidad}
                     </span>
-                    <span className="text-sm text-gray-500">{e.duracion} min</span>
+                    <span className="text-sm text-[#8C97B5]">{e.duracion} min</span>
                     <button
                       onClick={() => eliminarEntrenamiento(e.id)}
-                      className="text-gray-300 hover:text-red-400 text-xs"
+                      className="text-[#8C97B5]/40 hover:text-red-400 text-xs"
                     >✕</button>
                   </div>
                 </li>
@@ -240,21 +240,21 @@ export default function DeportePage() {
         </div>
 
         {/* Por deporte */}
-        <div className="bg-white rounded-xl border border-gray-100">
-          <div className="p-4 border-b">
-            <h3 className="font-semibold text-gray-800">Por deporte</h3>
+        <div className="bg-[#131B2E] rounded-xl border border-[#1E293B]">
+          <div className="p-4 border-b border-[#1E293B]">
+            <h3 className="font-semibold text-[#F4F6FB]">Por deporte</h3>
           </div>
           {porDeporte.length === 0 ? (
-            <p className="p-4 text-gray-400 text-sm">Sin datos aún.</p>
+            <p className="p-4 text-[#8C97B5] text-sm">Sin datos aún.</p>
           ) : (
-            <ul className="divide-y">
+            <ul className="divide-y divide-[#1E293B]">
               {porDeporte.map(d => (
                 <li key={d.deporte} className="px-4 py-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-700">{deporteEmoji[d.deporte]} {d.deporte}</span>
-                    <span className="text-xs text-gray-400">{d.count}x</span>
+                    <span className="text-sm text-[#F4F6FB]">{deporteEmoji[d.deporte]} {d.deporte}</span>
+                    <span className="text-xs text-[#8C97B5]">{d.count}x</span>
                   </div>
-                  <p className="text-xs text-gray-400 mt-0.5">{Math.floor(d.minutos / 60)}h {d.minutos % 60}m total</p>
+                  <p className="text-xs text-[#8C97B5] mt-0.5">{Math.floor(d.minutos / 60)}h {d.minutos % 60}m total</p>
                 </li>
               ))}
             </ul>

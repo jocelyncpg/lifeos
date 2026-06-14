@@ -32,47 +32,51 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md space-y-8 p-8 bg-white rounded-lg shadow">
-        <h2 className="text-2xl font-bold text-center">Iniciar sesión</h2>
-        
+    <div className="flex min-h-screen items-center justify-center bg-[#0B0F1A]">
+      <div className="w-full max-w-md space-y-8 p-8 bg-[#131B2E] border border-[#1E293B] rounded-xl">
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-md bg-[#00E5C7] flex items-center justify-center text-[#04342C] font-semibold text-lg mb-3">L</div>
+          <h2 className="text-2xl font-bold text-center text-[#F4F6FB]">Iniciar sesión</h2>
+          <p className="text-sm text-[#8C97B5] mt-1">LifeOS — tu copiloto de vida</p>
+        </div>
+
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
+            <label className="block text-sm font-medium text-[#8C97B5] mb-1">Email</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-md text-[#F4F6FB]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Contraseña</label>
+            <label className="block text-sm font-medium text-[#8C97B5] mb-1">Contraseña</label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-md text-[#F4F6FB]"
             />
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-400 text-sm">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+            className="w-full bg-[#00E5C7] text-[#04342C] font-medium py-2 rounded-md hover:bg-[#00E5C7]/80 disabled:opacity-50"
           >
             {loading ? 'Cargando...' : 'Entrar'}
           </button>
         </form>
 
-        <p className="text-center text-sm">
+        <p className="text-center text-sm text-[#8C97B5]">
           ¿No tienes cuenta?{' '}
-          <a href="/register" className="text-blue-600 hover:underline">
+          <a href="/register" className="text-[#00E5C7] hover:underline">
             Regístrate
           </a>
         </p>

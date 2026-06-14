@@ -165,21 +165,21 @@ export default function AcademicoPage() {
   }
 
   const colorNota = (n: number) => {
-    if (n >= 5.0) return 'text-green-600'
-    if (n >= 4.0) return 'text-yellow-600'
-    return 'text-red-600'
+    if (n >= 5.0) return 'text-green-400'
+    if (n >= 4.0) return 'text-yellow-400'
+    return 'text-red-400'
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">🎓 Académico</h2>
-          <p className="text-gray-500 text-sm mt-1">Gestiona tus ramos y notas</p>
+          <h2 className="text-2xl font-bold text-[#F4F6FB]">🎓 Académico</h2>
+          <p className="text-[#8C97B5] text-sm mt-1">Gestiona tus ramos y notas</p>
         </div>
         <button
           onClick={() => setMostrarFormRamo(!mostrarFormRamo)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
+          className="bg-[#00E5C7] text-[#04342C] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#00E5C7]/80"
         >
           + Nuevo ramo
         </button>
@@ -187,43 +187,43 @@ export default function AcademicoPage() {
 
       {/* Form nuevo ramo */}
       {mostrarFormRamo && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
-          <h3 className="font-semibold text-gray-800">Nuevo ramo</h3>
+        <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6 space-y-4">
+          <h3 className="font-semibold text-[#F4F6FB]">Nuevo ramo</h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="text-sm font-medium text-gray-700">Nombre</label>
+              <label className="text-sm font-medium text-[#8C97B5]">Nombre</label>
               <input
                 type="text"
                 value={nombre}
                 onChange={e => setNombre(e.target.value)}
                 placeholder="Ej: Bases de Datos"
-                className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700">Profesor</label>
+              <label className="text-sm font-medium text-[#8C97B5]">Profesor</label>
               <input
                 type="text"
                 value={profesor}
                 onChange={e => setProfesor(e.target.value)}
                 placeholder="Opcional"
-                className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-700">Créditos</label>
+              <label className="text-sm font-medium text-[#8C97B5]">Créditos</label>
               <input
                 type="number"
                 value={creditos}
                 onChange={e => setCreditos(e.target.value)}
-                className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]"
               />
             </div>
           </div>
-          {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
+          {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}
           <div className="flex gap-2 justify-end">
-            <button onClick={() => setMostrarFormRamo(false)} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-            <button onClick={agregarRamo} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar</button>
+            <button onClick={() => setMostrarFormRamo(false)} className="px-4 py-2 text-sm text-[#8C97B5] hover:bg-white/5 rounded-lg">Cancelar</button>
+            <button onClick={agregarRamo} className="px-4 py-2 text-sm bg-[#00E5C7] text-[#04342C] font-medium rounded-lg hover:bg-[#00E5C7]/80">Guardar</button>
           </div>
         </div>
       )}
@@ -231,11 +231,11 @@ export default function AcademicoPage() {
       <div className="grid grid-cols-3 gap-6">
         {/* Lista de ramos */}
         <div className="col-span-1 space-y-3">
-          <h3 className="font-semibold text-gray-700 text-sm uppercase tracking-wide">Mis ramos</h3>
+          <h3 className="font-semibold text-[#8C97B5] text-sm uppercase tracking-wide">Mis ramos</h3>
           {loading ? (
-            <p className="text-gray-400 text-sm">Cargando...</p>
+            <p className="text-[#8C97B5] text-sm">Cargando...</p>
           ) : ramos.length === 0 ? (
-            <p className="text-gray-400 text-sm">No hay ramos aún.</p>
+            <p className="text-[#8C97B5] text-sm">No hay ramos aún.</p>
           ) : (
             ramos.map(r => {
               const promedio = calcularPromedio(r.notas)
@@ -244,12 +244,12 @@ export default function AcademicoPage() {
                 <div
                   key={r.id}
                   onClick={() => setRamoSeleccionado(r)}
-                  className={`p-4 rounded-xl border cursor-pointer transition-all ${isSelected ? 'border-blue-400 bg-blue-50' : 'border-gray-100 bg-white hover:shadow-sm'}`}
+                  className={`p-4 rounded-xl border cursor-pointer transition-all ${isSelected ? 'border-[#00E5C7]/40 bg-[#00E5C7]/10' : 'border-[#1E293B] bg-[#131B2E] hover:border-[#00E5C7]/20'}`}
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-medium text-gray-800 text-sm">{r.nombre}</p>
-                      {r.profesor && <p className="text-xs text-gray-400 mt-0.5">{r.profesor}</p>}
+                      <p className="font-medium text-[#F4F6FB] text-sm">{r.nombre}</p>
+                      {r.profesor && <p className="text-xs text-[#8C97B5] mt-0.5">{r.profesor}</p>}
                     </div>
                     <div className="flex items-center gap-2">
                       {promedio && (
@@ -259,11 +259,11 @@ export default function AcademicoPage() {
                       )}
                       <button
                         onClick={e => { e.stopPropagation(); eliminarRamo(r.id) }}
-                        className="text-gray-300 hover:text-red-400 text-xs"
+                        className="text-[#8C97B5]/40 hover:text-red-400 text-xs"
                       >✕</button>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">{r.notas.length} evaluación(es) · {r.creditos} créditos</p>
+                  <p className="text-xs text-[#8C97B5] mt-1">{r.notas.length} evaluación(es) · {r.creditos} créditos</p>
                 </div>
               )
             })
@@ -273,20 +273,20 @@ export default function AcademicoPage() {
         {/* Detalle ramo seleccionado */}
         <div className="col-span-2">
           {!ramoSeleccionado ? (
-            <div className="flex items-center justify-center h-48 bg-white rounded-xl border border-gray-100">
-              <p className="text-gray-400 text-sm">Selecciona un ramo para ver sus notas</p>
+            <div className="flex items-center justify-center h-48 bg-[#131B2E] rounded-xl border border-[#1E293B]">
+              <p className="text-[#8C97B5] text-sm">Selecciona un ramo para ver sus notas</p>
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-gray-100 p-6 space-y-4">
+            <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6 space-y-4">
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="font-bold text-gray-800">{ramoSeleccionado.nombre}</h3>
-                  {ramoSeleccionado.profesor && <p className="text-sm text-gray-400">{ramoSeleccionado.profesor}</p>}
+                  <h3 className="font-bold text-[#F4F6FB]">{ramoSeleccionado.nombre}</h3>
+                  {ramoSeleccionado.profesor && <p className="text-sm text-[#8C97B5]">{ramoSeleccionado.profesor}</p>}
                 </div>
                 <div className="text-right">
                   {calcularPromedio(ramoSeleccionado.notas) && (
                     <div>
-                      <p className="text-xs text-gray-400">Promedio actual</p>
+                      <p className="text-xs text-[#8C97B5]">Promedio actual</p>
                       <p className={`text-3xl font-bold ${colorNota(parseFloat(calcularPromedio(ramoSeleccionado.notas)!))}`}>
                         {calcularPromedio(ramoSeleccionado.notas)}
                       </p>
@@ -297,26 +297,26 @@ export default function AcademicoPage() {
 
               <button
                 onClick={() => setMostrarFormNota(!mostrarFormNota)}
-                className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-blue-700"
+                className="bg-[#00E5C7] text-[#04342C] px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-[#00E5C7]/80"
               >
                 + Agregar nota
               </button>
 
               {mostrarFormNota && (
-                <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                <div className="bg-[#0B0F1A] rounded-lg p-4 space-y-3 border border-[#1E293B]">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Evaluación</label>
+                      <label className="text-sm font-medium text-[#8C97B5]">Evaluación</label>
                       <input
                         type="text"
                         value={evaluacion}
                         onChange={e => setEvaluacion(e.target.value)}
                         placeholder="Ej: Certamen 1"
-                        className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                        className="w-full mt-1 px-3 py-2 bg-[#131B2E] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Nota (1.0 - 7.0)</label>
+                      <label className="text-sm font-medium text-[#8C97B5]">Nota (1.0 - 7.0)</label>
                       <input
                         type="number"
                         value={nota}
@@ -325,11 +325,11 @@ export default function AcademicoPage() {
                         min="1"
                         max="7"
                         placeholder="Ej: 5.5"
-                        className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                        className="w-full mt-1 px-3 py-2 bg-[#131B2E] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Porcentaje (%)</label>
+                      <label className="text-sm font-medium text-[#8C97B5]">Porcentaje (%)</label>
                       <input
                         type="number"
                         value={porcentaje}
@@ -337,33 +337,33 @@ export default function AcademicoPage() {
                         min="1"
                         max="100"
                         placeholder="Ej: 30"
-                        className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                        className="w-full mt-1 px-3 py-2 bg-[#131B2E] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Fecha</label>
+                      <label className="text-sm font-medium text-[#8C97B5]">Fecha</label>
                       <input
                         type="date"
                         value={fecha}
                         onChange={e => setFecha(e.target.value)}
-                        className="w-full mt-1 px-3 py-2 border rounded-lg text-sm"
+                        className="w-full mt-1 px-3 py-2 bg-[#131B2E] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]"
                       />
                     </div>
                   </div>
-                  {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
+                  {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}
                   <div className="flex gap-2 justify-end">
-                    <button onClick={() => setMostrarFormNota(false)} className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-200 rounded-lg">Cancelar</button>
-                    <button onClick={agregarNota} className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar</button>
+                    <button onClick={() => setMostrarFormNota(false)} className="px-3 py-1.5 text-sm text-[#8C97B5] hover:bg-white/5 rounded-lg">Cancelar</button>
+                    <button onClick={agregarNota} className="px-3 py-1.5 text-sm bg-[#00E5C7] text-[#04342C] font-medium rounded-lg hover:bg-[#00E5C7]/80">Guardar</button>
                   </div>
                 </div>
               )}
 
               {ramoSeleccionado.notas.length === 0 ? (
-                <p className="text-gray-400 text-sm">No hay notas registradas aún.</p>
+                <p className="text-[#8C97B5] text-sm">No hay notas registradas aún.</p>
               ) : (
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-left text-gray-400 text-xs uppercase border-b">
+                    <tr className="text-left text-[#8C97B5] text-xs uppercase border-b border-[#1E293B]">
                       <th className="pb-2">Evaluación</th>
                       <th className="pb-2">Nota</th>
                       <th className="pb-2">Porcentaje</th>
@@ -371,15 +371,15 @@ export default function AcademicoPage() {
                       <th className="pb-2"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y">
+                  <tbody className="divide-y divide-[#1E293B]">
                     {ramoSeleccionado.notas.map(n => (
                       <tr key={n.id}>
-                        <td className="py-2 text-gray-700">{n.evaluacion}</td>
+                        <td className="py-2 text-[#F4F6FB]">{n.evaluacion}</td>
                         <td className={`py-2 font-semibold ${colorNota(n.nota)}`}>{n.nota.toFixed(1)}</td>
-                        <td className="py-2 text-gray-500">{n.porcentaje}%</td>
-                        <td className="py-2 text-gray-400">{n.fecha}</td>
+                        <td className="py-2 text-[#8C97B5]">{n.porcentaje}%</td>
+                        <td className="py-2 text-[#8C97B5]">{n.fecha}</td>
                         <td className="py-2">
-                          <button onClick={() => eliminarNota(n.id)} className="text-gray-300 hover:text-red-400">✕</button>
+                          <button onClick={() => eliminarNota(n.id)} className="text-[#8C97B5]/40 hover:text-red-400">✕</button>
                         </td>
                       </tr>
                     ))}
