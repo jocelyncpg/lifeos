@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
+import { generarInsights, Insight } from '@/lib/insights'
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('')
@@ -11,6 +12,7 @@ export default function DashboardPage() {
   const [promedioGeneral, setPromedioGeneral] = useState<number | null>(null)
   const [ultimoEntrenamiento, setUltimoEntrenamiento] = useState<any>(null)
   const [totalEntrenamientos, setTotalEntrenamientos] = useState(0)
+  const [insights, setInsights] = useState<Insight[]>([])
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
@@ -44,7 +46,7 @@ export default function DashboardPage() {
     }
 
     // Académico
-    const { data: notas } = await supabase.from('notas').select('nota, porcentaje')
+    const { data: notas } = await supabase.from('notas').select('nota, porcentaje, fecha')
     if (notas && notas.length > 0) {
       const promedio = notas.reduce((s, n) => s + n.nota, 0) / notas.length
       setPromedioGeneral(parseFloat(promedio.toFixed(1)))
@@ -59,6 +61,14 @@ export default function DashboardPage() {
       setUltimoEntrenamiento(entrenos[0] || null)
       setTotalEntrenamientos(entrenos.length)
     }
+
+    // Insights con IA basada en reglas
+    const insightsGenerados = generarInsights(
+      transacciones || [],
+      notas || [],
+      entrenos || []
+    )
+    setInsights(insightsGenerados)
 
     setLoading(false)
   }
@@ -77,6 +87,12 @@ export default function DashboardPage() {
     Ciclismo: '🚲', Fútbol: '⚽', Tenis: '🎾', Yoga: '🧘', Gym: '🏋️', Otro: '💪',
   }
 
+  const insightStyle = (tipo: Insight['tipo']) => {
+    if (tipo === 'positivo') return { box: 'bg-green-500/10 border-green-500/20', text: 'text-green-400' }
+    if (tipo === 'alerta') return { box: 'bg-orange-500/10 border-orange-500/20', text: 'text-orange-400' }
+    return { box: 'bg-[#7C5CFC]/10 border-[#7C5CFC]/20', text: 'text-[#7C5CFC]' }
+  }
+
   if (loading) return <p className="text-[#8C97B5] text-sm">Cargando...</p>
 
   return (
@@ -87,6 +103,20 @@ export default function DashboardPage() {
           Hola{userName ? `, ${userName}` : ''} 👋
         </h2>
         <p className="text-[#8C97B5] mt-1">Aquí está tu resumen de hoy</p>
+      </div>
+
+      {/* Insights inteligentes */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold text-[#8C97B5] uppercase tracking-wide">🧠 Recomendaciones para ti</h3>
+        {insights.map((insight, i) => {
+          const style = insightStyle(insight.tipo)
+          return (
+            <div key={i} className={`flex items-start gap-3 p-4 rounded-xl border ${style.box}`}>
+              <span className="text-2xl">{insight.emoji}</span>
+              <p className={`text-sm ${style.text}`}>{insight.mensaje}</p>
+            </div>
+          )
+        })}
       </div>
 
       {/* Tarjetas resumen */}
