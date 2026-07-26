@@ -45,19 +45,15 @@ export default function FinanzasPage() {
 
   const agregarTransaccion = async () => {
     setErrorMsg('')
-
     if (!monto || !categoria) {
       setErrorMsg('Por favor completa categoría y monto.')
       return
     }
-
     const { data: { user } } = await supabase.auth.getUser()
-
     if (!user) {
       setErrorMsg('No hay sesión activa. Inicia sesión primero.')
       return
     }
-
     const { error } = await supabase.from('transacciones').insert({
       user_id: user.id,
       tipo,
@@ -66,12 +62,10 @@ export default function FinanzasPage() {
       monto: parseFloat(monto),
       fecha,
     })
-
     if (error) {
       setErrorMsg('Error al guardar: ' + error.message)
       return
     }
-
     setMostrarForm(false)
     setMonto('')
     setDescripcion('')
@@ -112,7 +106,6 @@ export default function FinanzasPage() {
     color: coloresCategorias[i % coloresCategorias.length],
   }))
 
-  // Últimos 6 meses para gráfico de barras
   const ultimosMeses = Array.from({ length: 6 }, (_, i) => {
     const d = new Date()
     d.setMonth(d.getMonth() - (5 - i))
@@ -141,41 +134,41 @@ export default function FinanzasPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-[#F4F6FB]">💸 Finanzas</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-[#F4F6FB]">💸 Finanzas</h2>
           <p className="text-[#8C97B5] text-sm mt-1">Controla tus ingresos y gastos</p>
         </div>
         <button
           onClick={() => setMostrarForm(!mostrarForm)}
-          className="bg-[#00E5C7] text-[#04342C] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#00E5C7]/80"
+          className="bg-[#00E5C7] text-[#04342C] px-3 md:px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#00E5C7]/80"
         >
           + Nueva transacción
         </button>
       </div>
 
       {/* Resumen */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
-          <p className="text-sm text-green-400 font-medium">Ingresos</p>
-          <p className="text-2xl font-bold text-green-400 mt-1">{formatMonto(totalIngresos)}</p>
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-3 md:p-4">
+          <p className="text-xs md:text-sm text-green-400 font-medium">Ingresos</p>
+          <p className="text-lg md:text-2xl font-bold text-green-400 mt-1">{formatMonto(totalIngresos)}</p>
         </div>
-        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
-          <p className="text-sm text-red-400 font-medium">Gastos</p>
-          <p className="text-2xl font-bold text-red-400 mt-1">{formatMonto(totalGastos)}</p>
+        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 md:p-4">
+          <p className="text-xs md:text-sm text-red-400 font-medium">Gastos</p>
+          <p className="text-lg md:text-2xl font-bold text-red-400 mt-1">{formatMonto(totalGastos)}</p>
         </div>
-        <div className={`rounded-xl p-4 border ${balance >= 0 ? 'bg-[#00E5C7]/10 border-[#00E5C7]/20' : 'bg-orange-500/10 border-orange-500/20'}`}>
-          <p className={`text-sm font-medium ${balance >= 0 ? 'text-[#00E5C7]' : 'text-orange-400'}`}>Balance</p>
-          <p className={`text-2xl font-bold mt-1 ${balance >= 0 ? 'text-[#00E5C7]' : 'text-orange-400'}`}>{formatMonto(balance)}</p>
+        <div className={`rounded-xl p-3 md:p-4 border ${balance >= 0 ? 'bg-[#00E5C7]/10 border-[#00E5C7]/20' : 'bg-orange-500/10 border-orange-500/20'}`}>
+          <p className={`text-xs md:text-sm font-medium ${balance >= 0 ? 'text-[#00E5C7]' : 'text-orange-400'}`}>Balance</p>
+          <p className={`text-lg md:text-2xl font-bold mt-1 ${balance >= 0 ? 'text-[#00E5C7]' : 'text-orange-400'}`}>{formatMonto(balance)}</p>
         </div>
       </div>
 
       {/* Gráficos */}
-      <div className="grid grid-cols-2 gap-6">
-        <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 md:p-6">
           <h3 className="font-semibold text-[#F4F6FB] mb-4">Gastos por categoría</h3>
           {gastosPorCategoria.length === 0 ? (
             <p className="text-[#8C97B5] text-sm">No hay gastos registrados aún.</p>
           ) : (
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie
                   data={gastosPorCategoria}
@@ -183,13 +176,13 @@ export default function FinanzasPage() {
                   nameKey="categoria"
                   cx="50%"
                   cy="50%"
-                  outerRadius={80}
+                  outerRadius={70}
                   label={(props: any) => (
                     <text
                       x={props.x}
                       y={props.y}
                       fill="#8C97B5"
-                      fontSize={12}
+                      fontSize={11}
                       textAnchor={props.x > props.cx ? 'start' : 'end'}
                       dominantBaseline="central"
                     >
@@ -207,13 +200,13 @@ export default function FinanzasPage() {
           )}
         </div>
 
-        <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6">
+        <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 md:p-6">
           <h3 className="font-semibold text-[#F4F6FB] mb-4">Últimos 6 meses</h3>
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={220}>
             <BarChart data={dataMensual}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
-              <XAxis dataKey="mes" fontSize={12} stroke="#8C97B5" />
-              <YAxis fontSize={12} stroke="#8C97B5" tickFormatter={(v) => `${v / 1000}k`} />
+              <XAxis dataKey="mes" fontSize={11} stroke="#8C97B5" />
+              <YAxis fontSize={11} stroke="#8C97B5" tickFormatter={(v) => `${v / 1000}k`} />
               <Tooltip formatter={(value: any) => formatMonto(Number(value))} contentStyle={tooltipStyle} />
               <Legend wrapperStyle={{ fontSize: '12px', color: '#8C97B5' }} />
               <Bar dataKey="ingresos" fill="#00E5C7" name="Ingresos" radius={[4, 4, 0, 0]} />
@@ -225,9 +218,8 @@ export default function FinanzasPage() {
 
       {/* Formulario */}
       {mostrarForm && (
-        <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6 space-y-4">
+        <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 md:p-6 space-y-4">
           <h3 className="font-semibold text-[#F4F6FB]">Nueva transacción</h3>
-
           <div className="flex gap-2">
             <button
               onClick={() => { setTipo('gasto'); setCategoria('') }}
@@ -242,8 +234,7 @@ export default function FinanzasPage() {
               Ingreso
             </button>
           </div>
-
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-[#8C97B5]">Categoría</label>
               <select
@@ -287,24 +278,10 @@ export default function FinanzasPage() {
               />
             </div>
           </div>
-
-          {errorMsg && (
-            <p className="text-red-400 text-sm">{errorMsg}</p>
-          )}
-
+          {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}
           <div className="flex gap-2 justify-end">
-            <button
-              onClick={() => setMostrarForm(false)}
-              className="px-4 py-2 text-sm text-[#8C97B5] hover:bg-white/5 rounded-lg"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={agregarTransaccion}
-              className="px-4 py-2 text-sm bg-[#00E5C7] text-[#04342C] font-medium rounded-lg hover:bg-[#00E5C7]/80"
-            >
-              Guardar
-            </button>
+            <button onClick={() => setMostrarForm(false)} className="px-4 py-2 text-sm text-[#8C97B5] hover:bg-white/5 rounded-lg">Cancelar</button>
+            <button onClick={agregarTransaccion} className="px-4 py-2 text-sm bg-[#00E5C7] text-[#04342C] font-medium rounded-lg hover:bg-[#00E5C7]/80">Guardar</button>
           </div>
         </div>
       )}
@@ -329,16 +306,11 @@ export default function FinanzasPage() {
                     <p className="text-xs text-[#8C97B5]">{t.descripcion || '—'} · {t.fecha}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 md:gap-3">
                   <span className={`text-sm font-semibold ${t.tipo === 'ingreso' ? 'text-green-400' : 'text-red-400'}`}>
                     {t.tipo === 'ingreso' ? '+' : '-'}{formatMonto(t.monto)}
                   </span>
-                  <button
-                    onClick={() => eliminarTransaccion(t.id)}
-                    className="text-[#8C97B5]/40 hover:text-red-400 text-xs"
-                  >
-                    ✕
-                  </button>
+                  <button onClick={() => eliminarTransaccion(t.id)} className="text-[#8C97B5]/40 hover:text-red-400 text-xs">✕</button>
                 </div>
               </li>
             ))}
