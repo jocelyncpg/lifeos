@@ -26,7 +26,6 @@ export default function DashboardPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    // Perfil
     const { data: perfil } = await supabase
       .from('profiles')
       .select('full_name')
@@ -34,7 +33,6 @@ export default function DashboardPage() {
       .single()
     if (perfil) setUserName(perfil.full_name?.split(' ')[0] || '')
 
-    // Finanzas
     const { data: transacciones } = await supabase
       .from('transacciones')
       .select('*')
@@ -47,14 +45,12 @@ export default function DashboardPage() {
       setUltimoGasto(transacciones.find(t => t.tipo === 'gasto') || null)
     }
 
-    // Académico
     const { data: notas } = await supabase.from('notas').select('nota, porcentaje, fecha')
     if (notas && notas.length > 0) {
       const promedio = notas.reduce((s, n) => s + n.nota, 0) / notas.length
       setPromedioGeneral(parseFloat(promedio.toFixed(1)))
     }
 
-    // Deporte
     const { data: entrenos } = await supabase
       .from('entrenamientos')
       .select('*')
@@ -64,12 +60,10 @@ export default function DashboardPage() {
       setTotalEntrenamientos(entrenos.length)
     }
 
-    // Calendario
     const { data: eventosData } = await supabase
       .from('eventos')
       .select('titulo, fecha, hora, tipo, completado')
 
-    // Salud
     const { data: medsData } = await supabase
       .from('medicamentos')
       .select('nombre, horarios, activo')
@@ -84,7 +78,6 @@ export default function DashboardPage() {
       .sort((a, b) => a.fecha.localeCompare(b.fecha))[0]
     setProximaCita(proxima || null)
 
-    // Insights con IA basada en reglas
     const insightsGenerados = generarInsights(
       transacciones || [],
       notas || [],
@@ -94,7 +87,6 @@ export default function DashboardPage() {
       citasData || []
     )
     setInsights(insightsGenerados)
-
     setLoading(false)
   }
 
@@ -121,48 +113,48 @@ export default function DashboardPage() {
   if (loading) return <p className="text-[#8C97B5] text-sm">Cargando...</p>
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Saludo */}
       <div>
-        <h2 className="text-3xl font-bold text-[#F4F6FB]">
+        <h2 className="text-2xl md:text-3xl font-bold text-[#F4F6FB]">
           Hola{userName ? `, ${userName}` : ''} 👋
         </h2>
-        <p className="text-[#8C97B5] mt-1">Aquí está tu resumen de hoy</p>
+        <p className="text-[#8C97B5] mt-1 text-sm">Aquí está tu resumen de hoy</p>
       </div>
 
       {/* Insights inteligentes */}
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-[#8C97B5] uppercase tracking-wide">🧠 Recomendaciones para ti</h3>
+        <h3 className="text-xs md:text-sm font-semibold text-[#8C97B5] uppercase tracking-wide">🧠 Recomendaciones para ti</h3>
         {insights.map((insight, i) => {
           const style = insightStyle(insight.tipo)
           return (
-            <div key={i} className={`flex items-start gap-3 p-4 rounded-xl border ${style.box}`}>
-              <span className="text-2xl">{insight.emoji}</span>
-              <p className={`text-sm ${style.text}`}>{insight.mensaje}</p>
+            <div key={i} className={`flex items-start gap-3 p-3 md:p-4 rounded-xl border ${style.box}`}>
+              <span className="text-xl md:text-2xl">{insight.emoji}</span>
+              <p className={`text-xs md:text-sm ${style.text}`}>{insight.mensaje}</p>
             </div>
           )
         })}
       </div>
 
       {/* Tarjetas resumen */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
 
         {/* Finanzas */}
-        <Link href="/dashboard/finanzas" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6 hover:border-[#00E5C7]/40 transition-colors space-y-4">
+        <Link href="/dashboard/finanzas" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 md:p-6 hover:border-[#00E5C7]/40 transition-colors space-y-3 md:space-y-4">
           <div className="flex justify-between items-center">
-            <span className="text-2xl">💸</span>
-            <span className="text-xs text-[#8C97B5] uppercase tracking-wide">Finanzas</span>
+            <span className="text-xl md:text-2xl">💸</span>
+            <span className="text-xs text-[#8C97B5] uppercase tracking-wide hidden md:block">Finanzas</span>
           </div>
           <div>
-            <p className="text-sm text-[#8C97B5]">Balance del mes</p>
-            <p className={`text-2xl font-bold mt-1 ${balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+            <p className="text-xs md:text-sm text-[#8C97B5]">Balance</p>
+            <p className={`text-lg md:text-2xl font-bold mt-1 ${balance >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               {formatMonto(balance)}
             </p>
           </div>
           {ultimoGasto && (
-            <div className="pt-3 border-t border-[#1E293B]">
+            <div className="pt-2 md:pt-3 border-t border-[#1E293B]">
               <p className="text-xs text-[#8C97B5]">Último gasto</p>
-              <p className="text-sm text-[#F4F6FB] mt-0.5">
+              <p className="text-xs md:text-sm text-[#F4F6FB] mt-0.5 truncate">
                 {ultimoGasto.categoria} — {formatMonto(ultimoGasto.monto)}
               </p>
             </div>
@@ -170,64 +162,64 @@ export default function DashboardPage() {
         </Link>
 
         {/* Académico */}
-        <Link href="/dashboard/academico" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6 hover:border-[#00E5C7]/40 transition-colors space-y-4">
+        <Link href="/dashboard/academico" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 md:p-6 hover:border-[#00E5C7]/40 transition-colors space-y-3 md:space-y-4">
           <div className="flex justify-between items-center">
-            <span className="text-2xl">🎓</span>
-            <span className="text-xs text-[#8C97B5] uppercase tracking-wide">Académico</span>
+            <span className="text-xl md:text-2xl">🎓</span>
+            <span className="text-xs text-[#8C97B5] uppercase tracking-wide hidden md:block">Académico</span>
           </div>
           <div>
-            <p className="text-sm text-[#8C97B5]">Promedio general</p>
+            <p className="text-xs md:text-sm text-[#8C97B5]">Promedio</p>
             {promedioGeneral ? (
-              <p className={`text-2xl font-bold mt-1 ${colorNota(promedioGeneral)}`}>
+              <p className={`text-lg md:text-2xl font-bold mt-1 ${colorNota(promedioGeneral)}`}>
                 {promedioGeneral}
               </p>
             ) : (
-              <p className="text-2xl font-bold mt-1 text-[#8C97B5]/40">—</p>
+              <p className="text-lg md:text-2xl font-bold mt-1 text-[#8C97B5]/40">—</p>
             )}
           </div>
-          <div className="pt-3 border-t border-[#1E293B]">
+          <div className="pt-2 md:pt-3 border-t border-[#1E293B]">
             <p className="text-xs text-[#8C97B5]">
               {promedioGeneral
-                ? promedioGeneral >= 5.0 ? '¡Vas muy bien! 🌟' : promedioGeneral >= 4.0 ? 'Puedes mejorar 💪' : 'Necesitas reforzar 📚'
+                ? promedioGeneral >= 5.0 ? '¡Muy bien! 🌟' : promedioGeneral >= 4.0 ? 'Puedes mejorar 💪' : 'Reforzar 📚'
                 : 'Sin notas aún'}
             </p>
           </div>
         </Link>
 
         {/* Deporte */}
-        <Link href="/dashboard/deporte" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6 hover:border-[#00E5C7]/40 transition-colors space-y-4">
+        <Link href="/dashboard/deporte" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 md:p-6 hover:border-[#00E5C7]/40 transition-colors space-y-3 md:space-y-4">
           <div className="flex justify-between items-center">
-            <span className="text-2xl">💪</span>
-            <span className="text-xs text-[#8C97B5] uppercase tracking-wide">Deporte</span>
+            <span className="text-xl md:text-2xl">💪</span>
+            <span className="text-xs text-[#8C97B5] uppercase tracking-wide hidden md:block">Deporte</span>
           </div>
           <div>
-            <p className="text-sm text-[#8C97B5]">Entrenamientos totales</p>
-            <p className="text-2xl font-bold mt-1 text-[#00E5C7]">{totalEntrenamientos}</p>
+            <p className="text-xs md:text-sm text-[#8C97B5]">Entrenamientos</p>
+            <p className="text-lg md:text-2xl font-bold mt-1 text-[#00E5C7]">{totalEntrenamientos}</p>
           </div>
           {ultimoEntrenamiento && (
-            <div className="pt-3 border-t border-[#1E293B]">
-              <p className="text-xs text-[#8C97B5]">Último entrenamiento</p>
-              <p className="text-sm text-[#F4F6FB] mt-0.5">
-                {deporteEmoji[ultimoEntrenamiento.deporte] || '💪'} {ultimoEntrenamiento.deporte} — {ultimoEntrenamiento.duracion} min
+            <div className="pt-2 md:pt-3 border-t border-[#1E293B]">
+              <p className="text-xs text-[#8C97B5]">Último</p>
+              <p className="text-xs md:text-sm text-[#F4F6FB] mt-0.5 truncate">
+                {deporteEmoji[ultimoEntrenamiento.deporte] || '💪'} {ultimoEntrenamiento.deporte}
               </p>
             </div>
           )}
         </Link>
 
         {/* Salud */}
-        <Link href="/dashboard/salud" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6 hover:border-[#00E5C7]/40 transition-colors space-y-4">
+        <Link href="/dashboard/salud" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 md:p-6 hover:border-[#00E5C7]/40 transition-colors space-y-3 md:space-y-4">
           <div className="flex justify-between items-center">
-            <span className="text-2xl">💊</span>
-            <span className="text-xs text-[#8C97B5] uppercase tracking-wide">Salud</span>
+            <span className="text-xl md:text-2xl">💊</span>
+            <span className="text-xs text-[#8C97B5] uppercase tracking-wide hidden md:block">Salud</span>
           </div>
           <div>
-            <p className="text-sm text-[#8C97B5]">Medicamentos activos</p>
-            <p className="text-2xl font-bold mt-1 text-[#7C5CFC]">{medicamentosActivos}</p>
+            <p className="text-xs md:text-sm text-[#8C97B5]">Medicamentos</p>
+            <p className="text-lg md:text-2xl font-bold mt-1 text-[#7C5CFC]">{medicamentosActivos}</p>
           </div>
           {proximaCita && (
-            <div className="pt-3 border-t border-[#1E293B]">
+            <div className="pt-2 md:pt-3 border-t border-[#1E293B]">
               <p className="text-xs text-[#8C97B5]">Próxima cita</p>
-              <p className="text-sm text-[#F4F6FB] mt-0.5">
+              <p className="text-xs md:text-sm text-[#F4F6FB] mt-0.5 truncate">
                 {proximaCita.especialidad} — {proximaCita.fecha}
               </p>
             </div>
@@ -236,29 +228,29 @@ export default function DashboardPage() {
       </div>
 
       {/* Actividad reciente */}
-      <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6">
-        <h3 className="font-semibold text-[#F4F6FB] mb-4">Actividad reciente</h3>
+      <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 md:p-6">
+        <h3 className="font-semibold text-[#F4F6FB] mb-4 text-sm md:text-base">Actividad reciente</h3>
         <div className="space-y-3">
           {ultimoGasto && (
             <div className="flex items-center gap-3 text-sm">
-              <span className="w-8 h-8 bg-red-500/10 rounded-full flex items-center justify-center text-base">💸</span>
-              <div>
-                <p className="text-[#F4F6FB]">Gasto en <span className="font-medium">{ultimoGasto.categoria}</span></p>
+              <span className="w-8 h-8 bg-red-500/10 rounded-full flex items-center justify-center text-base flex-shrink-0">💸</span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[#F4F6FB] text-xs md:text-sm truncate">Gasto en <span className="font-medium">{ultimoGasto.categoria}</span></p>
                 <p className="text-xs text-[#8C97B5]">{ultimoGasto.fecha}</p>
               </div>
-              <span className="ml-auto text-red-400 font-medium">-{formatMonto(ultimoGasto.monto)}</span>
+              <span className="text-red-400 font-medium text-xs md:text-sm flex-shrink-0">-{formatMonto(ultimoGasto.monto)}</span>
             </div>
           )}
           {ultimoEntrenamiento && (
             <div className="flex items-center gap-3 text-sm">
-              <span className="w-8 h-8 bg-[#00E5C7]/10 rounded-full flex items-center justify-center text-base">
+              <span className="w-8 h-8 bg-[#00E5C7]/10 rounded-full flex items-center justify-center text-base flex-shrink-0">
                 {deporteEmoji[ultimoEntrenamiento.deporte] || '💪'}
               </span>
-              <div>
-                <p className="text-[#F4F6FB]">Entrenamiento de <span className="font-medium">{ultimoEntrenamiento.deporte}</span></p>
+              <div className="min-w-0 flex-1">
+                <p className="text-[#F4F6FB] text-xs md:text-sm truncate">Entrenamiento de <span className="font-medium">{ultimoEntrenamiento.deporte}</span></p>
                 <p className="text-xs text-[#8C97B5]">{ultimoEntrenamiento.fecha}</p>
               </div>
-              <span className="ml-auto text-[#00E5C7] font-medium">{ultimoEntrenamiento.duracion} min</span>
+              <span className="text-[#00E5C7] font-medium text-xs md:text-sm flex-shrink-0">{ultimoEntrenamiento.duracion} min</span>
             </div>
           )}
           {!ultimoGasto && !ultimoEntrenamiento && (
