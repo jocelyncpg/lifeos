@@ -63,10 +63,8 @@ export default function DeportePage() {
   const agregarEntrenamiento = async () => {
     setErrorMsg('')
     if (!duracion) { setErrorMsg('Ingresa la duración.'); return }
-
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setErrorMsg('No hay sesión activa.'); return }
-
     const { error } = await supabase.from('entrenamientos').insert({
       user_id: user.id,
       deporte,
@@ -75,9 +73,7 @@ export default function DeportePage() {
       descripcion,
       fecha,
     })
-
     if (error) { setErrorMsg('Error: ' + error.message); return }
-
     setDuracion('')
     setDescripcion('')
     setMostrarForm(false)
@@ -103,39 +99,38 @@ export default function DeportePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-[#F4F6FB]">💪 Deporte</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-[#F4F6FB]">💪 Deporte</h2>
           <p className="text-[#8C97B5] text-sm mt-1">Registra tus entrenamientos</p>
         </div>
         <button
           onClick={() => setMostrarForm(!mostrarForm)}
-          className="bg-[#00E5C7] text-[#04342C] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#00E5C7]/80"
+          className="bg-[#00E5C7] text-[#04342C] px-3 md:px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#00E5C7]/80"
         >
-          + Nuevo entrenamiento
+          + Nuevo
         </button>
       </div>
 
       {/* Resumen */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="bg-[#00E5C7]/10 border border-[#00E5C7]/20 rounded-xl p-4">
-          <p className="text-sm text-[#00E5C7] font-medium">Total entrenamientos</p>
-          <p className="text-2xl font-bold text-[#00E5C7] mt-1">{entrenamientos.length}</p>
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-[#00E5C7]/10 border border-[#00E5C7]/20 rounded-xl p-3 md:p-4">
+          <p className="text-xs md:text-sm text-[#00E5C7] font-medium">Total</p>
+          <p className="text-lg md:text-2xl font-bold text-[#00E5C7] mt-1">{entrenamientos.length}</p>
         </div>
-        <div className="bg-[#7C5CFC]/10 border border-[#7C5CFC]/20 rounded-xl p-4">
-          <p className="text-sm text-[#7C5CFC] font-medium">Tiempo total</p>
-          <p className="text-2xl font-bold text-[#7C5CFC] mt-1">{totalHoras}h {minutosRestantes}m</p>
+        <div className="bg-[#7C5CFC]/10 border border-[#7C5CFC]/20 rounded-xl p-3 md:p-4">
+          <p className="text-xs md:text-sm text-[#7C5CFC] font-medium">Tiempo</p>
+          <p className="text-lg md:text-2xl font-bold text-[#7C5CFC] mt-1">{totalHoras}h {minutosRestantes}m</p>
         </div>
-        <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-4">
-          <p className="text-sm text-orange-400 font-medium">Deportes distintos</p>
-          <p className="text-2xl font-bold text-orange-400 mt-1">{porDeporte.length}</p>
+        <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-3 md:p-4">
+          <p className="text-xs md:text-sm text-orange-400 font-medium">Deportes</p>
+          <p className="text-lg md:text-2xl font-bold text-orange-400 mt-1">{porDeporte.length}</p>
         </div>
       </div>
 
       {/* Formulario */}
       {mostrarForm && (
-        <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-6 space-y-4">
+        <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 md:p-6 space-y-4">
           <h3 className="font-semibold text-[#F4F6FB]">Nuevo entrenamiento</h3>
-
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-[#8C97B5]">Deporte</label>
               <select
@@ -181,7 +176,7 @@ export default function DeportePage() {
                 className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]"
               />
             </div>
-            <div className="col-span-2">
+            <div className="md:col-span-2">
               <label className="text-sm font-medium text-[#8C97B5]">Descripción</label>
               <input
                 type="text"
@@ -192,9 +187,7 @@ export default function DeportePage() {
               />
             </div>
           </div>
-
           {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}
-
           <div className="flex gap-2 justify-end">
             <button onClick={() => setMostrarForm(false)} className="px-4 py-2 text-sm text-[#8C97B5] hover:bg-white/5 rounded-lg">Cancelar</button>
             <button onClick={agregarEntrenamiento} className="px-4 py-2 text-sm bg-[#00E5C7] text-[#04342C] font-medium rounded-lg hover:bg-[#00E5C7]/80">Guardar</button>
@@ -202,9 +195,10 @@ export default function DeportePage() {
         </div>
       )}
 
-      <div className="grid grid-cols-3 gap-6">
+      {/* Lista + por deporte */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Lista entrenamientos */}
-        <div className="col-span-2 bg-[#131B2E] rounded-xl border border-[#1E293B]">
+        <div className="md:col-span-2 bg-[#131B2E] rounded-xl border border-[#1E293B]">
           <div className="p-4 border-b border-[#1E293B]">
             <h3 className="font-semibold text-[#F4F6FB]">Historial</h3>
           </div>
@@ -223,15 +217,12 @@ export default function DeportePage() {
                       <p className="text-xs text-[#8C97B5]">{e.descripcion || '—'} · {e.fecha}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${intensidadColor[e.intensidad]}`}>
                       {e.intensidad}
                     </span>
-                    <span className="text-sm text-[#8C97B5]">{e.duracion} min</span>
-                    <button
-                      onClick={() => eliminarEntrenamiento(e.id)}
-                      className="text-[#8C97B5]/40 hover:text-red-400 text-xs"
-                    >✕</button>
+                    <span className="text-sm text-[#8C97B5]">{e.duracion}m</span>
+                    <button onClick={() => eliminarEntrenamiento(e.id)} className="text-[#8C97B5]/40 hover:text-red-400 text-xs">✕</button>
                   </div>
                 </li>
               ))}

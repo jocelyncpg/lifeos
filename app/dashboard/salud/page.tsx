@@ -30,6 +30,7 @@ export default function SaludPage() {
   const [citas, setCitas] = useState<CitaMedica[]>([])
   const [loading, setLoading] = useState(true)
   const [errorMsg, setErrorMsg] = useState('')
+  const [tabActivo, setTabActivo] = useState<'medicamentos' | 'citas'>('medicamentos')
 
   const [mostrarFormMed, setMostrarFormMed] = useState(false)
   const [nombreMed, setNombreMed] = useState('')
@@ -49,50 +50,27 @@ export default function SaludPage() {
 
   const supabase = createClient()
 
-  useEffect(() => {
-    cargarDatos()
-  }, [])
+  useEffect(() => { cargarDatos() }, [])
 
   const cargarDatos = async () => {
-    const { data: meds } = await supabase
-      .from('medicamentos')
-      .select('*')
-      .order('created_at', { ascending: false })
+    const { data: meds } = await supabase.from('medicamentos').select('*').order('created_at', { ascending: false })
     if (meds) setMedicamentos(meds)
-
-    const { data: citasData } = await supabase
-      .from('citas_medicas')
-      .select('*')
-      .order('fecha', { ascending: true })
+    const { data: citasData } = await supabase.from('citas_medicas').select('*').order('fecha', { ascending: true })
     if (citasData) setCitas(citasData)
-
     setLoading(false)
   }
 
   const agregarMedicamento = async () => {
     setErrorMsg('')
     if (!nombreMed) { setErrorMsg('El nombre es obligatorio.'); return }
-
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setErrorMsg('No hay sesión activa.'); return }
-
     const { error } = await supabase.from('medicamentos').insert({
-      user_id: user.id,
-      nombre: nombreMed,
-      dosis,
-      frecuencia,
-      horarios,
-      fecha_inicio: fechaInicio,
-      fecha_fin: fechaFin || null,
+      user_id: user.id, nombre: nombreMed, dosis, frecuencia, horarios,
+      fecha_inicio: fechaInicio, fecha_fin: fechaFin || null,
     })
-
     if (error) { setErrorMsg('Error: ' + error.message); return }
-
-    setNombreMed('')
-    setDosis('')
-    setFrecuencia('')
-    setHorarios('')
-    setFechaFin('')
+    setNombreMed(''); setDosis(''); setFrecuencia(''); setHorarios(''); setFechaFin('')
     setMostrarFormMed(false)
     cargarDatos()
   }
@@ -110,27 +88,14 @@ export default function SaludPage() {
   const agregarCita = async () => {
     setErrorMsg('')
     if (!especialidad) { setErrorMsg('La especialidad es obligatoria.'); return }
-
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { setErrorMsg('No hay sesión activa.'); return }
-
     const { error } = await supabase.from('citas_medicas').insert({
-      user_id: user.id,
-      especialidad,
-      doctor,
-      lugar,
-      fecha: fechaCita,
-      hora: horaCita || null,
-      notas,
+      user_id: user.id, especialidad, doctor, lugar,
+      fecha: fechaCita, hora: horaCita || null, notas,
     })
-
     if (error) { setErrorMsg('Error: ' + error.message); return }
-
-    setEspecialidad('')
-    setDoctor('')
-    setLugar('')
-    setHoraCita('')
-    setNotas('')
+    setEspecialidad(''); setDoctor(''); setLugar(''); setHoraCita(''); setNotas('')
     setMostrarFormCita(false)
     cargarDatos()
   }
@@ -147,7 +112,6 @@ export default function SaludPage() {
 
   const medicamentosActivos = medicamentos.filter(m => m.activo)
   const medicamentosInactivos = medicamentos.filter(m => !m.activo)
-
   const hoy = new Date().toISOString().split('T')[0]
   const citasProximas = citas.filter(c => !c.completada && c.fecha >= hoy)
   const citasPasadas = citas.filter(c => c.completada || c.fecha < hoy)
@@ -155,13 +119,30 @@ export default function SaludPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#F4F6FB]">💊 Salud</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-[#F4F6FB]">💊 Salud</h2>
         <p className="text-[#8C97B5] text-sm mt-1">Medicamentos y citas médicas</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      {/* Tabs móvil */}
+      <div className="md:hidden flex gap-2 border-b border-[#1E293B] pb-2">
+        <button
+          onClick={() => setTabActivo('medicamentos')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium ${tabActivo === 'medicamentos' ? 'bg-[#00E5C7]/10 text-[#00E5C7]' : 'text-[#8C97B5]'}`}
+        >
+          💊 Medicamentos
+        </button>
+        <button
+          onClick={() => setTabActivo('citas')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium ${tabActivo === 'citas' ? 'bg-[#00E5C7]/10 text-[#00E5C7]' : 'text-[#8C97B5]'}`}
+        >
+          🏥 Citas
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
         {/* Medicamentos */}
-        <div className="space-y-4">
+        <div className={`space-y-4 ${tabActivo === 'citas' ? 'hidden md:block' : 'block'}`}>
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-[#F4F6FB]">Medicamentos</h3>
             <button
@@ -174,64 +155,36 @@ export default function SaludPage() {
 
           {mostrarFormMed && (
             <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="col-span-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="md:col-span-2">
                   <label className="text-sm font-medium text-[#8C97B5]">Nombre</label>
-                  <input
-                    type="text"
-                    value={nombreMed}
-                    onChange={e => setNombreMed(e.target.value)}
-                    placeholder="Ej: Ibuprofeno"
-                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
-                  />
+                  <input type="text" value={nombreMed} onChange={e => setNombreMed(e.target.value)} placeholder="Ej: Ibuprofeno"
+                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-[#8C97B5]">Dosis</label>
-                  <input
-                    type="text"
-                    value={dosis}
-                    onChange={e => setDosis(e.target.value)}
-                    placeholder="Ej: 400mg"
-                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
-                  />
+                  <input type="text" value={dosis} onChange={e => setDosis(e.target.value)} placeholder="Ej: 400mg"
+                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-[#8C97B5]">Frecuencia</label>
-                  <input
-                    type="text"
-                    value={frecuencia}
-                    onChange={e => setFrecuencia(e.target.value)}
-                    placeholder="Ej: Cada 8 horas"
-                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
-                  />
+                  <input type="text" value={frecuencia} onChange={e => setFrecuencia(e.target.value)} placeholder="Ej: Cada 8 horas"
+                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50" />
                 </div>
-                <div className="col-span-2">
+                <div className="md:col-span-2">
                   <label className="text-sm font-medium text-[#8C97B5]">Horarios</label>
-                  <input
-                    type="text"
-                    value={horarios}
-                    onChange={e => setHorarios(e.target.value)}
-                    placeholder="Ej: 08:00, 16:00, 00:00"
-                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
-                  />
+                  <input type="text" value={horarios} onChange={e => setHorarios(e.target.value)} placeholder="Ej: 08:00, 16:00, 00:00"
+                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-[#8C97B5]">Fecha inicio</label>
-                  <input
-                    type="date"
-                    value={fechaInicio}
-                    onChange={e => setFechaInicio(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]"
-                  />
+                  <input type="date" value={fechaInicio} onChange={e => setFechaInicio(e.target.value)}
+                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-[#8C97B5]">Fecha fin (opcional)</label>
-                  <input
-                    type="date"
-                    value={fechaFin}
-                    onChange={e => setFechaFin(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]"
-                  />
+                  <input type="date" value={fechaFin} onChange={e => setFechaFin(e.target.value)}
+                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]" />
                 </div>
               </div>
               {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}
@@ -290,7 +243,7 @@ export default function SaludPage() {
         </div>
 
         {/* Citas médicas */}
-        <div className="space-y-4">
+        <div className={`space-y-4 ${tabActivo === 'medicamentos' ? 'hidden md:block' : 'block'}`}>
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-[#F4F6FB]">Citas médicas</h3>
             <button
@@ -303,64 +256,36 @@ export default function SaludPage() {
 
           {mostrarFormCita && (
             <div className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="text-sm font-medium text-[#8C97B5]">Especialidad</label>
-                  <input
-                    type="text"
-                    value={especialidad}
-                    onChange={e => setEspecialidad(e.target.value)}
-                    placeholder="Ej: Dentista"
-                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
-                  />
+                  <input type="text" value={especialidad} onChange={e => setEspecialidad(e.target.value)} placeholder="Ej: Dentista"
+                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-[#8C97B5]">Doctor/a</label>
-                  <input
-                    type="text"
-                    value={doctor}
-                    onChange={e => setDoctor(e.target.value)}
-                    placeholder="Opcional"
-                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
-                  />
+                  <input type="text" value={doctor} onChange={e => setDoctor(e.target.value)} placeholder="Opcional"
+                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50" />
                 </div>
-                <div className="col-span-2">
+                <div className="md:col-span-2">
                   <label className="text-sm font-medium text-[#8C97B5]">Lugar</label>
-                  <input
-                    type="text"
-                    value={lugar}
-                    onChange={e => setLugar(e.target.value)}
-                    placeholder="Opcional"
-                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
-                  />
+                  <input type="text" value={lugar} onChange={e => setLugar(e.target.value)} placeholder="Opcional"
+                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-[#8C97B5]">Fecha</label>
-                  <input
-                    type="date"
-                    value={fechaCita}
-                    onChange={e => setFechaCita(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]"
-                  />
+                  <input type="date" value={fechaCita} onChange={e => setFechaCita(e.target.value)}
+                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]" />
                 </div>
                 <div>
                   <label className="text-sm font-medium text-[#8C97B5]">Hora</label>
-                  <input
-                    type="time"
-                    value={horaCita}
-                    onChange={e => setHoraCita(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]"
-                  />
+                  <input type="time" value={horaCita} onChange={e => setHoraCita(e.target.value)}
+                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB]" />
                 </div>
-                <div className="col-span-2">
+                <div className="md:col-span-2">
                   <label className="text-sm font-medium text-[#8C97B5]">Notas</label>
-                  <input
-                    type="text"
-                    value={notas}
-                    onChange={e => setNotas(e.target.value)}
-                    placeholder="Opcional"
-                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50"
-                  />
+                  <input type="text" value={notas} onChange={e => setNotas(e.target.value)} placeholder="Opcional"
+                    className="w-full mt-1 px-3 py-2 bg-[#0B0F1A] border border-[#1E293B] rounded-lg text-sm text-[#F4F6FB] placeholder:text-[#8C97B5]/50" />
                 </div>
               </div>
               {errorMsg && <p className="text-red-400 text-sm">{errorMsg}</p>}
@@ -388,7 +313,7 @@ export default function SaludPage() {
                       </div>
                     </div>
                     <p className="text-xs text-[#8C97B5] mt-0.5">
-                      {c.fecha}{c.hora && ` · ${c.hora.slice(0,5)}`}{c.lugar && ` · ${c.lugar}`}
+                      {c.fecha}{c.hora && ` · ${c.hora.slice(0, 5)}`}{c.lugar && ` · ${c.lugar}`}
                     </p>
                     {c.notas && <p className="text-xs text-[#8C97B5] mt-0.5">{c.notas}</p>}
                   </li>
