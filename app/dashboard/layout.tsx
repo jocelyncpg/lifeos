@@ -12,6 +12,7 @@ const menuItems = [
   { href: '/dashboard/deporte', label: 'Deporte', icon: '💪' },
   { href: '/dashboard/calendario', label: 'Calendario', icon: '🗓️' },
   { href: '/dashboard/salud', label: 'Salud', icon: '💊' },
+  { href: '/dashboard/nutricion', label: 'Nutrición', icon: '🍽️' },
 ]
 
 export default function DashboardLayout({
