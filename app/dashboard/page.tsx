@@ -14,6 +14,8 @@ export default function DashboardPage() {
   const [totalEntrenamientos, setTotalEntrenamientos] = useState(0)
   const [medicamentosActivos, setMedicamentosActivos] = useState(0)
   const [proximaCita, setProximaCita] = useState<any>(null)
+  const [caloriasHoy, setCaloriasHoy] = useState(0)
+  const [comidasHoy, setComidasHoy] = useState(0)
   const [insights, setInsights] = useState<Insight[]>([])
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
@@ -78,6 +80,17 @@ export default function DashboardPage() {
       .sort((a, b) => a.fecha.localeCompare(b.fecha))[0]
     setProximaCita(proxima || null)
 
+    // Nutrición de hoy
+    const hoy = new Date().toISOString().split('T')[0]
+    const { data: comidasData } = await supabase
+      .from('registros_comida')
+      .select('calorias')
+      .eq('fecha', hoy)
+    if (comidasData) {
+      setComidasHoy(comidasData.length)
+      setCaloriasHoy(comidasData.reduce((s, c) => s + (c.calorias || 0), 0))
+    }
+
     const insightsGenerados = generarInsights(
       transacciones || [],
       notas || [],
@@ -136,8 +149,8 @@ export default function DashboardPage() {
         })}
       </div>
 
-      {/* Tarjetas resumen */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+      {/* Tarjetas resumen — fila 1 */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
 
         {/* Finanzas */}
         <Link href="/dashboard/finanzas" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 md:p-6 hover:border-[#00E5C7]/40 transition-colors space-y-3 md:space-y-4">
@@ -205,6 +218,10 @@ export default function DashboardPage() {
             </div>
           )}
         </Link>
+      </div>
+
+      {/* Tarjetas resumen — fila 2 */}
+      <div className="grid grid-cols-2 gap-3 md:gap-4">
 
         {/* Salud */}
         <Link href="/dashboard/salud" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 md:p-6 hover:border-[#00E5C7]/40 transition-colors space-y-3 md:space-y-4">
@@ -224,6 +241,25 @@ export default function DashboardPage() {
               </p>
             </div>
           )}
+        </Link>
+
+        {/* Nutrición */}
+        <Link href="/dashboard/nutricion" className="bg-[#131B2E] rounded-xl border border-[#1E293B] p-4 md:p-6 hover:border-[#00E5C7]/40 transition-colors space-y-3 md:space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-xl md:text-2xl">🍽️</span>
+            <span className="text-xs text-[#8C97B5] uppercase tracking-wide hidden md:block">Nutrición</span>
+          </div>
+          <div>
+            <p className="text-xs md:text-sm text-[#8C97B5]">Calorías hoy</p>
+            <p className="text-lg md:text-2xl font-bold mt-1 text-orange-400">
+              {caloriasHoy > 0 ? `${caloriasHoy} kcal` : '—'}
+            </p>
+          </div>
+          <div className="pt-2 md:pt-3 border-t border-[#1E293B]">
+            <p className="text-xs text-[#8C97B5]">
+              {comidasHoy > 0 ? `${comidasHoy} comida(s) registrada(s)` : 'Sin registros hoy'}
+            </p>
+          </div>
         </Link>
       </div>
 
